@@ -54,16 +54,24 @@ document.addEventListener("DOMContentLoaded", () => {
   setInterval(updateClocksAndCountdown, 1000);
   updateClocksAndCountdown(); // Run immediately to avoid UI delay
   
-  // Connect Validation Systems
-  document.getElementById("registrationForm").addEventListener("submit", handleRegistrationSubmit);
-  document.getElementById("feedbackForm").addEventListener("submit", handleFeedbackSubmit);
+  // Connect Validation Systems safely
+  const registrationForm = document.getElementById("registrationForm");
+  if (registrationForm) {
+    registrationForm.addEventListener("submit", handleRegistrationSubmit);
+  }
+  
+  const feedbackForm = document.getElementById("feedbackForm");
+  if (feedbackForm) {
+    feedbackForm.addEventListener("submit", handleFeedbackSubmit);
+  }
 });
 
 // ==========================================================================
-// 🌸 DIVINE ROSE PETAL FALLING ANIMATION ENGINE (TRAVELLING SYSTEMS EFFECT)
+// 🌸 DIVINE ROSE PETAL FALLING ANIMATION ENGINE
 // ==========================================================================
 function initRosePetalsCanvas() {
   const canvas = document.getElementById("petals-canvas");
+  if (!canvas) return;
   const ctx = canvas.getContext("2d");
   
   let width = canvas.width = window.innerWidth;
@@ -110,7 +118,7 @@ function initRosePetalsCanvas() {
       ctx.rotate((this.rotation * Math.PI) / 180);
       ctx.beginPath();
       
-      // Beautiful parametric rose petal geometry string curve
+      // Parametric rose petal geometry string curve
       ctx.ellipse(0, 0, this.size, this.size * 0.65, 0, 0, 2 * Math.PI);
       
       // Fill colors match the sunset pink color token cleanly
@@ -146,6 +154,12 @@ function updateClocksAndCountdown() {
   const digitalClockEl = document.getElementById("digitalClock");
   if (digitalClockEl) {
     digitalClockEl.textContent = now.toLocaleTimeString('en-US', { hour12: true });
+  }
+
+  // Live Bottom Indicator Clock Fix
+  const digitalDisplayEl = document.getElementById("digitalClockDisplay");
+  if (digitalDisplayEl) {
+    digitalDisplayEl.textContent = `Right now in Kolkata: ${now.toLocaleTimeString('en-US', { hour12: true })}`;
   }
   
   // 2. Divine Analog Clock Hand Rotation System
@@ -226,7 +240,6 @@ function populateEventDropdown() {
 
 function setupFilterChips() {
   const chips = document.querySelectorAll(".filter-chip");
-  const cards = document.querySelectorAll(".event-card");
   
   chips.forEach(chip => {
     chip.addEventListener("click", () => {
@@ -234,6 +247,7 @@ function setupFilterChips() {
       chip.classList.add("active");
       
       const category = chip.getAttribute("data-category");
+      const cards = document.querySelectorAll(".event-card");
       
       cards.forEach(card => {
         if (category === "all" || card.getAttribute("data-cat") === category) {
@@ -259,41 +273,36 @@ function handleRegistrationSubmit(e) {
     statusBox.style.display = "none";
   }
 
-  // Elements Extraction
   const nameInput = document.getElementById("studentName");
   const rollInput = document.getElementById("rollNo");
-  const deptInput = document.getElementById("deptSelect");
-  const emailInput = document.getElementById("emailAddr");
-  const phoneInput = document.getElementById("phoneNo");
-  const eventInput = document.getElementById("eventSelect");
   
-  // Gender Radio Target Parsing
-  const genderOptions = document.getElementsByName("gender");
-  let genderSelected = false;
-  for(let opt of genderOptions) {
-    if(opt.checked) genderSelected = true;
-  }
-
-  // Regex Patterns System
   const namePattern = /^[A-Za-z][A-Za-z .'-]{2,50}$/;
-  const rollPattern = /^\d{2,12}$/; // Dynamic checking allowing standard roll structures
-  const phonePattern = /^[6-9]\d{9}$/; // Valid 10 digit Indian Mobile numbers
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i;
+  const rollPattern = /^\d{2,12}$/;
 
-  // 1. Name Check
   if (nameInput && !namePattern.test(nameInput.value.trim())) {
     showInputError("nameError", "Enter a valid alphabet string name (min 3 characters).");
     isValid = false;
   } else { clearInputError("nameError"); }
 
-  // 2. Roll Check
-if (rollInput && !rollPattern.test(rollInput.value.trim())) {
-showInputError("rollError", "Please input a valid numeric system Roll Number.");
-isValid = false;
-} else { clearInputError("rollError"); }
+  if (rollInput && !rollPattern.test(rollInput.value.trim())) {
+    showInputError("rollError", "Please input a valid numeric system Roll Number.");
+    isValid = false;
+  } else { clearInputError("rollError"); }
+  
+  if (isValid && statusBox) {
+    statusBox.textContent = "Registration Completed Successfully! 🪷";
+Use code with caution.
+statusBox.className = "form-status-box status-success";
+statusBox.style.display = "block";
+}
 }
 function handleFeedbackSubmit(e) {
 e.preventDefault();
+const fbStatus = document.getElementById("fbStatus");
+if (fbStatus) {
+fbStatus.textContent = "Thank you for your divine feedback! 🪷";
+fbStatus.style.color = "green";
+}
 }
 function showInputError(id, msg) {
 const el = document.getElementById(id);
@@ -303,3 +312,19 @@ function clearInputError(id) {
 const el = document.getElementById(id);
 if (el) el.textContent = "";
 }
+
+#### 2. Your HTML Structure Fixes
+Ensure your script inclusion near the bottom of `index.html` references the script. Place your script load line right before the closing `</body>` tag like this:
+
+```html
+  <!-- All sections of main code go here -->
+  </main>
+
+  <footer class="site-footer">
+    <p>© 2026 Institute of Engineering & Management. All Rights Reserved.</p>
+    <p>Curated by Aniket Chowdhury (Roll 16)</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
